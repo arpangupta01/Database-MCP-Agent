@@ -1,4 +1,4 @@
-from functions import lru_catche
+from functools import lru_cache
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -30,15 +30,14 @@ class Settings(BaseSettings):
         """
         return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
     
-@lru_catche
-def get_settings(self)->Settings:
-        
-        """
-        Retrieves the settings instance, utilizing caching for efficiency.
-        
-        Returns:
-            Settings: The settings instance.
-        """
-        return Settings()
+@lru_cache
+def get_settings() -> Settings:
+    """
+    Retrieves the settings instance, utilizing caching for efficiency.
+
+    Returns:
+        Settings: The settings instance.
+    """
+    return Settings()
     
     
