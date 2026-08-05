@@ -71,4 +71,47 @@ def get_columns(self,schema:str,table:str)->list[ColumnInfo]:
         )
         for row in rows
     ]
-              
+    
+    
+def get_foreigh_keys(self):
+    query = text("""
+    SELECT
+    tc.table_name,
+    kcu.column_name,
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name
+
+    FROM information_schema.table_constraints tc
+
+    JOIN information_schema.key_column_usage kcu
+
+    ON tc.constraint_name = kcu.constraint_name
+
+    JOIN information_schema.constraint_column_usage ccu
+
+    ON tc.constraint_name = ccu.constraint_name
+
+    WHERE tc.constraint_type='FOREIGN KEY';
+    """)    
+    rows=self.session.execute(query)
+    return[
+        ForeignKeyInfo(
+            table=row.table_name,
+            column=row.column_name,
+            foreign_table=row.foreign_table_name,
+            foreign_column=row.foreign_column_name
+        )
+        for row in rows
+    ]
+    
+def get_sample_rows(self,schema:str,table:str,limit:int=5,):
+    query=text(
+    f"""
+        SELECT *
+        FROM {schema}.{table}
+        LIMIT :{limit};
+    """)
+    rows=self.session.execute(query)
+    return [dict(row._mapping) for row in rows]
+        
+      

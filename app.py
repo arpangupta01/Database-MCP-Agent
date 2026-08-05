@@ -1,6 +1,13 @@
 from sqlalchemy import text
 from database.connections import get_db
 from database.connections import engine
+from database.metadata_repositories import MetadataRepository
+repo = MetadataRepository()
+
+schemas = repo.get_schemas()
+
+for schema in schemas:
+    print(schema)
 
 from Utils.logger import logger
 
